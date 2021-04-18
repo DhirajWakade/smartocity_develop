@@ -1,0 +1,169 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Smartocity | Admin Login in</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link	rel="stylesheet" th:href="@{/style/plugins/fontawesome-free/css/all.min.css}"> 
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <link	rel="stylesheet" th:href="@{/style/plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+  <link	rel="stylesheet" th:href="@{/style/dist/css/adminlte.min.css}">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <a href=""><b>Smarto</b>City</a>
+  </div>
+  <p style="display:block" id="logoutMsg" class="login-box-msg successMsg"></p>
+
+	<p style="display:block" class="login-box-msg errorMsg" id="errorMessage"></p>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+      <p class="login-box-msg">Admin Login</p>
+
+      <!--<form  method="post">-->
+        <div class="input-group mb-3">
+          <input id="mailId" type="email" class="form-control" placeholder="Email">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input  id="pass" type="password" class="form-control" placeholder="Password">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+         
+          <!-- /.col -->
+          <div class="offset-md-4 col-4">
+            <button type="submit" id="loginBtn" class="btn btn-primary btn-block">Sign In</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      <!-- </form>-->
+<hr>     
+
+      <p class="mb-2">
+        <a href="forgot-password.html">Reset password</a>
+      </p>
+      
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+
+<script	th:src="@{/style/plugins/jquery/jquery.min.js}"></script>
+<script	th:src="@{/style/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script	th:src="@{/style/dist/js/adminlte.min.js}"></script>
+<script>
+ $("#loginBtn").click(function(){
+	
+var base_url = window.location.origin+"/Smartocity";
+
+	 
+	 $("#logoutMsg").css({
+			"display":"none"
+		});
+	 
+	 var mailid=$("#mailId").val();
+	 var password=$("#pass").val();
+	 $("#errorMessage").text("");
+	 
+		$("#mailId").css({
+			"border-color" : "#d2d6de"
+		});
+		$("#pass").css({
+			"border-color" : "#d2d6de"
+		});
+	 
+	 if(mailid==''||mailid==null)
+	 {
+		 $("#errorMessage").text("Please Enter E-mail Id");
+			$("#errorMessage").css({
+				"display":"block",
+				"color" : "#ff3333"
+			});
+			$("#mailId").css({
+				"display":"block",
+				"border-color" : "#ff3333",
+			});
+			$("#mailId").focus();
+	 }
+	 else if(!validateForm(mailid))
+		{
+			$("#errorMessage").text("Please Enter Valid Email Id");
+			$("#errorMessage").css({
+				"display":"block",
+				"color" : "#ff3333"
+			});
+			$("#mailId").css({
+				"border-color" : "#ff3333"
+			});
+			$("#mailId").focus();
+		}
+	 else if(password==''||password==null)
+	{
+		 $("#errorMessage").text("Please Enter Password");
+			$("#errorMessage").css({
+				"display":"block",
+				"color" : "#ff3333"
+			});
+			$("#pass").css({
+				"border-color" : "#ff3333",
+			});
+			$("#pass").focus();
+	}
+	 else
+		 {
+		 var formData={adUserMail:mailid,adUserPass:password};
+		 $.ajax({
+				type : 'POST',
+				url : base_url+'/restAdmin/login',
+				data : JSON.stringify(formData),
+				contentType : 'application/json',
+				success : function(data) {
+				
+					var data1 = JSON.parse(JSON.stringify(data));
+					
+					if(data1.status == "1") {
+					
+						window.location.href = base_url+"/admin/index";
+					} else {
+						$("#errorMessage").text(data.message);
+						$("#errorMessage").css({
+							"display":"block",
+							"color" : "red"
+						});
+					}
+				}
+			});
+		 }
+	 
+ });
+</script>
+<script>
+function validateForm(x) {
+    
+    var atpos = x.indexOf("@");
+    var dotpos = x.lastIndexOf(".");
+    if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) 
+    {
+        return false;
+    }
+    else
+    	return true;
+}
+</script>
+</body>
+</html>
